@@ -1,0 +1,17 @@
+<package>
+  <description brief="task_planner">
+
+     task_planner
+
+  </description>
+  <author>Ze Ji</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/task_planner</url>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+
