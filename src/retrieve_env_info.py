@@ -11,7 +11,23 @@ import json
 
 def handle_get_workspace(req):
     print '%s' % req.map
-    query = exec_query("");
+    res = exec_query(
+        """
+        PREFIX srs: <http://www.srs-project.eu/ontologies/srs.owl#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX ipa-kitchen: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
+        SELECT ?objs ?x ?y ?z ?w ?h ?l
+        WHERE { ?objs rdf:type srs:FurniturePiece .
+        ?objs srs:xCoord ?x .
+        ?objs srs:yCoord ?y .
+        ?objs srs:zCoord ?z .
+        ?objs srs:widthOfObject ?w .
+        ?objs srs:heightOfObject ?h .
+        ?objs srs:lengthOfObject ?l . }
+        """);
+    print res
+    result = GetWorkspaceOnMapResponse()
+    return result
 
 def get_workspace_service():
     rospy.init_node('retrieve_env_info_server')
