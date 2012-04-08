@@ -8,6 +8,7 @@ from task_planner.msg import *
 from knowledge_server.srv import *
 import rospy
 import json
+from jsonparser import JSONResultParser
 
 def handle_get_workspace(req):
     print '%s' % req.map
@@ -25,9 +26,22 @@ def handle_get_workspace(req):
         ?objs srs:heightOfObject ?h .
         ?objs srs:lengthOfObject ?l . }
         """);
-    print res
+    
+    #print res
+    
     result = GetWorkspaceOnMapResponse()
+    res_json_parser = JSONResultParser(res)
+    result.objects = res_json_parser.get_result_by_varname('objs')
     return result
+
+def __get_result_by_var(res, varname):
+    try:
+        decres = json.loads(res)
+        
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    
+    return None
 
 def get_workspace_service():
     rospy.init_node('retrieve_env_info_server')
