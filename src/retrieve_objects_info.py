@@ -10,7 +10,7 @@ import rospy
 import json
 from jsonparser import JSONResultParser
 
-def handle_get_workspace(req):
+def handle_get_objects(req):
     print '%s' % req.map
     res = exec_query(
         """
@@ -18,7 +18,7 @@ def handle_get_workspace(req):
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX ipa-kitchen: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
         SELECT ?objs ?x ?y ?z ?w ?h ?l ?qx ?qy ?qz ?qw ?hhid
-        WHERE { ?objs rdf:type srs:FurniturePiece .
+        WHERE { ?objs rdf:type srs:FoodVessel .
         ?objs srs:xCoord ?x .
         ?objs srs:yCoord ?y .
         ?objs srs:zCoord ?z .
@@ -29,13 +29,12 @@ def handle_get_workspace(req):
         ?objs srs:widthOfObject ?w .
         ?objs srs:heightOfObject ?h .
         ?objs srs:lengthOfObject ?l .
-        ?objs srs:houseHoldObjectID ?hhid . }
-        """);
-    
-    #print res
+        ?objs srs:houseHoldObjectID ?hhid .}
+        """)
     
     result = GetWorkspaceOnMapResponse()
     res_json_parser = JSONResultParser(res)
+
     result.objects = res_json_parser.get_result_by_varname('objs')
     spainfoList = res_json_parser.get_spaital_info()
     
@@ -49,12 +48,11 @@ def handle_get_workspace(req):
         
     return result
 
-def get_workspace_service():
-    rospy.init_node('retrieve_env_info_server')
-    s = rospy.Service('get_workspace_on_map', GetWorkspaceOnMap, handle_get_workspace)
-    print 'Ready -- get_workspace_service'
+def get_objects_service():
+    rospy.init_node('retrieve_objects_info_server')
+    s = rospy.Service('get_objects_on_map', GetObjectsOnMap, handle_get_objects)
+    print 'Ready -- get_objects_service'
     rospy.spin()
-
 
 def exec_query(query):
     print 'exec sparql query'
@@ -69,4 +67,4 @@ def exec_query(query):
         print "Service call (QuerySparQL) failed : %s"%e
 
 if __name__ == "__main__":
-    get_workspace_service()
+    get_objects_service()

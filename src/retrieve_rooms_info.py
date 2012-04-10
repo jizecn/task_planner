@@ -3,14 +3,13 @@ import roslib
 roslib.load_manifest('task_planner')
 roslib.load_manifest('knowledge_server')
 
+import rospy
 from task_planner.srv import *
 from task_planner.msg import *
 from knowledge_server.srv import *
-import rospy
-import json
 from jsonparser import JSONResultParser
 
-def handle_get_workspace(req):
+def handle_get_rooms(req):
     print '%s' % req.map
     res = exec_query(
         """
@@ -49,12 +48,11 @@ def handle_get_workspace(req):
         
     return result
 
-def get_workspace_service():
-    rospy.init_node('retrieve_env_info_server')
+def get_rooms_service():
+    rospy.init_node('retrieve_rooms_info_server')
     s = rospy.Service('get_workspace_on_map', GetWorkspaceOnMap, handle_get_workspace)
     print 'Ready -- get_workspace_service'
     rospy.spin()
-
 
 def exec_query(query):
     print 'exec sparql query'
