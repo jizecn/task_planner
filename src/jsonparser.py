@@ -8,7 +8,7 @@ from task_planner.msg import *
 
 import json
 from StringIO import StringIO
-import rdflib
+#import rdflib
 
 class JSONResultParser:
     def __init__(self, json_raw_string):
