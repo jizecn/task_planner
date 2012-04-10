@@ -90,6 +90,62 @@ class JSONResultParser:
 
             ret.append(spainfo)
         return ret
+
+    #@staticmethod
+    def get_single_spaital_info(self, query_res):
+        print 'RUN- GET_SPATIAL_INFO'
+
+        res_dec = json.loads(query_res)
+        ress = res_dec['results']['bindings']
+        spainfo = SRSSpatialInfo()
+        spainfo.w = -1000
+        spainfo.h = -1000
+        spainfo.l = -1000
+        spainfo.pose.position.x = -1000
+        spainfo.pose.position.y = -1000
+        spainfo.pose.position.z = -1000
+        spainfo.pose.orientation.x = -1000
+        spainfo.pose.orientation.y = -1000
+        spainfo.pose.orientation.z = -1000
+        spainfo.pose.orientation.w = -1000
+
+        if len(ress) == 1:
+            r = ress[0]
+        else:
+            return spainfo
+        
+        if r['l']['type'] == 'typed-literal':
+            if r['l']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.l = float(r['l']['value'])
+        if r['h']['type'] == 'typed-literal':
+            if r['h']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.h = float(r['h']['value'])
+        if r['w']['type'] == 'typed-literal':
+            if r['w']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.w = float(r['w']['value'])
+        if r['x']['type'] == 'typed-literal':
+            if r['x']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.position.x = float(r['w']['value'])
+        if r['y']['type'] == 'typed-literal':
+            if r['y']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.position.y = float(r['y']['value'])
+        if r['z']['type'] == 'typed-literal':
+            if r['z']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.position.z = float(r['z']['value'])
+        if r['qx']['type'] == 'typed-literal':
+            if r['qx']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.orientation.x = float(r['qx']['value'])
+        if r['qy']['type'] == 'typed-literal':
+            if r['qy']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.orientation.y = float(r['qy']['value'])
+        if r['qz']['type'] == 'typed-literal':
+            if r['qz']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.orientation.z = float(r['qz']['value'])
+        if r['qw']['type'] == 'typed-literal':
+            if r['qw']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                spainfo.pose.orientation.w = float(r['qw']['value'])
+
+        return spainfo 
                 
 def test():
     json.dumps(['foo', {'bar': ('baz', None, 1.0, 2)}])

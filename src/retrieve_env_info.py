@@ -50,11 +50,102 @@ def handle_get_workspace(req):
     return result
 
 def get_workspace_service():
-    rospy.init_node('retrieve_env_info_server')
+    #rospy.init_node('retrieve_env_info_server')
     s = rospy.Service('get_workspace_on_map', GetWorkspaceOnMap, handle_get_workspace)
     print 'Ready -- get_workspace_service'
-    rospy.spin()
+    #rospy.spin()
 
+def handle_get_objects(req):
+    print '%s' % req.map
+    res = exec_query(
+        """
+        PREFIX srs: <http://www.srs-project.eu/ontologies/srs.owl#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX ipa-kitchen: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
+        SELECT ?objs ?x ?y ?z ?w ?h ?l ?qx ?qy ?qz ?qw ?hhid
+        WHERE { ?objs rdf:type srs:FoodVessel .
+        ?objs srs:xCoord ?x .
+        ?objs srs:yCoord ?y .
+        ?objs srs:zCoord ?z .
+        ?objs srs:qx ?qx .
+        ?objs srs:qy ?qy .
+        ?objs srs:qz ?qz .
+        ?objs srs:qu ?qw .
+        ?objs srs:widthOfObject ?w .
+        ?objs srs:heightOfObject ?h .
+        ?objs srs:lengthOfObject ?l .
+        ?objs srs:houseHoldObjectID ?hhid .}
+        """)
+    
+    result = GetObjectsOnMapResponse()
+    res_json_parser = JSONResultParser(res)
+
+    result.objects = res_json_parser.get_result_by_varname('objs')
+    spainfoList = res_json_parser.get_spaital_info()
+    
+    result.objectsInfo = spainfoList
+
+    hhids_int = res_json_parser.get_result_by_varname('hhid')
+    result.houseHoldId = list()
+    
+    for hhid_int in hhids_int:
+        result.houseHoldId.append(str(hhid_int))
+        
+    return result
+
+def get_objects_service():
+    #rospy.init_node('retrieve_objects_info_server')
+    s = rospy.Service('get_objects_on_map', GetObjectsOnMap, handle_get_objects)
+    print 'Ready -- get_objects_service'
+    #rospy.spin()
+
+def handle_get_rooms(req):
+    print '%s' % req.map
+    res = exec_query(
+        """
+        PREFIX srs: <http://www.srs-project.eu/ontologies/srs.owl#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX ipa-kitchen: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
+        SELECT ?objs
+        WHERE { ?objs rdf:type srs:RoomInAConstruction .
+        }
+        """);
+    
+    print res
+    
+    result = GetRoomsOnMapResponse()
+    res_json_parser = JSONResultParser(res)
+    result.rooms = res_json_parser.get_result_by_varname('objs')
+
+    for room in result.rooms:
+        spares = exec_query(
+            """
+            PREFIX srs: <http://www.srs-project.eu/ontologies/srs.owl#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX map-name: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
+            SELECT ?x ?y ?z ?qx ?qy ?qz ?qw ?w ?h ?l
+            WHERE {
+                    map-name:"""+ room + """ srs:xCoord ?x .
+                    map-name:"""+ room + """ srs:yCoord ?y .
+                    map-name:"""+ room + """ srs:zCoord ?z .
+                    map-name:"""+ room + """ srs:qx ?qx .
+                    map-name:"""+ room + """ srs:qy ?qy .
+                    map-name:"""+ room + """ srs:qz ?qz .
+                    map-name:"""+ room + """ srs:qu ?qw .
+                    map-name:"""+ room + """ srs:w ?w .
+                    map-name:"""+ room + """ srs:h ?h .
+                    map-name:"""+ room + """ srs:l ?l .              
+            }
+            """)
+
+        print spares
+        result.roomsInfo.append(res_json_parser.get_single_spaital_info(spares))
+   
+    return result
+
+def get_rooms_service():
+    s = rospy.Service('get_rooms_on_map', GetRoomsOnMap, handle_get_rooms)
+    print 'Ready -- get_rooms_service'
 
 def exec_query(query):
     print 'exec sparql query'
@@ -69,4 +160,8 @@ def exec_query(query):
         print "Service call (QuerySparQL) failed : %s"%e
 
 if __name__ == "__main__":
+    rospy.init_node('retrieve_env_info_server')
     get_workspace_service()
+    get_objects_service()
+    get_rooms_service()
+    rospy.spin()
