@@ -5,7 +5,7 @@ roslib.load_manifest('knowledge_server')
 
 from task_planner.srv import *
 from task_planner.msg import *
-
+from geometry_msgs.msg import *
 import json
 from StringIO import StringIO
 #import rdflib
@@ -36,6 +36,71 @@ class JSONResultParser:
                     ret.append(s)
 
         return ret
+
+    def get_predefined_poses(self):
+        print 'RUN - GET PREDEFINED POSES AS TUPLE'
+        #print self.json_raw_string
+        ress = self.json_decoded['results']['bindings']
+        # now [ress] is a list
+        l = len(ress)
+
+        result = GetPredefinedPosesResponse()
+        
+        locs = list()
+        poses = list()
+
+        for r in ress:
+            varname = 'poses'
+            if r[varname]['type'] == 'uri':
+                s = str(r[varname]['value'])
+                #print 'value of URI: ', s
+                localname_s = s.rsplit('#', 1)[1]
+            else:
+                pass
+            tempPose = Pose2D()
+
+            varname = 'x'
+            if r[varname]['type'] == 'typed-literal':
+                if r[varname]['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                    s = float(r[varname]['value'])
+                    #print 'value of int: ', s
+                    tempPose.x = s
+                    #tempPose.append(s)
+                else:
+                    pass
+            else:
+                pass
+
+            varname = 'y'
+            if r[varname]['type'] == 'typed-literal':
+                if r[varname]['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                    s = float(r[varname]['value'])
+                    #print 'value of int: ', s
+                    tempPose.y = s
+                    #tempPose.append(s)
+                else:
+                    pass
+            else:
+                pass
+
+            varname = 'theta'
+            if r[varname]['type'] == 'typed-literal':
+                if r[varname]['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
+                    s = float(r[varname]['value'])
+                    #print 'value of int: ', s
+                    tempPose.theta = s
+                    #tempPose.append(s)
+                else:
+                    pass
+            else:
+                pass
+
+            locs.append(localname_s)
+            poses.append(tempPose)
+
+        result.locations = locs
+        result.poses = poses
+        return result
         
     def get_spaital_info(self):
         print 'RUN- GET_SPATIAL_INFO'
@@ -146,7 +211,10 @@ class JSONResultParser:
                 spainfo.pose.orientation.w = float(r['qw']['value'])
 
         return spainfo 
-                
+
+    def parse_into_world_states(self):
+        return None
+    
 def test():
     json.dumps(['foo', {'bar': ('baz', None, 1.0, 2)}])
     print json.dumps("\"foo\bar")

@@ -63,38 +63,23 @@ import rospy
 import json
 from jsonparser import JSONResultParser
 from geometry_msgs.msg import *
-import action_knowledge_engine as eng
+from knowledge_interface import exec_query
 
-def handle_task_request(req):
-    result = TaskRequestResponse()
-    rospy.loginfo(req.task + '  ' + req.content)
-
-    # look for final state based on task type
-    wstates = eng.get_world_states()
-    print wstates
-    
-    # calculate solutions
-    
-    return result
-
-def task_request_service():
-    s = rospy.Service('task_request', TaskRequest, handle_task_request)
-    print 'Ready -- get_objects_service'
-
-def usage():
-    print """
-    To run this package:  rosrun task_planner planner.py
+def get_world_states():
+    print 'Run get_world_states'
+    sparql_query = """
+    PREFIX srs: <http://www.srs-project.eu/ontologies/srs.owl#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX ipa-kitchen: <http://www.srs-project.eu/ontologies/ipa-kitchen.owl#>
+    SELECT ?t
+    WHERE {
+    ?t a srs:SpatialThing .
+    }
     """
+    res = exec_query(sparql_query)
+    print res
+    json_res_parser = JSONResultParser(res)
+    states = json_res_parser.parse_into_world_states()
+    print states
 
-if __name__ == "__main__":
-    """
-    task planner
-    -- re-write the legacy code in a more generic way
-    -- and separate the work into different functional packages for easier maintenance
-    """
-    usage()
-    print 'start now... '
-    
-    rospy.init_node('task_planner_node')
-    task_request_service()
-    rospy.spin()
