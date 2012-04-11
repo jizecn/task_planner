@@ -40,6 +40,7 @@ def handle_get_workspace(req):
     if not req.ifGeometryInfo:
         return result
 
+    # if geometryInformation is needed
     for obj in result.objects:
         spares = exec_query(
             """
@@ -98,6 +99,7 @@ def handle_get_objects(req):
     if not req.ifGeometryInfo:
         return result
 
+    # if geometryInformation is needed
     for obj in result.objects:
         spares = exec_query(
             """
