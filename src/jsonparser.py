@@ -122,34 +122,34 @@ class JSONResultParser:
             spainfo.pose.orientation.y = -1000
             spainfo.pose.orientation.z = -1000
             spainfo.pose.orientation.w = -1000
-            if r['l']['type'] == 'typed-literal':
+            if r.has_key('l') and r['l']['type'] == 'typed-literal':
                 if r['l']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.l = float(r['l']['value'])
-            if r['h']['type'] == 'typed-literal':
+            if r.has_key('h') and r['h']['type'] == 'typed-literal':
                 if r['h']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.h = float(r['h']['value'])
-            if r['w']['type'] == 'typed-literal':
+            if r.has_key('w') and r['w']['type'] == 'typed-literal':
                 if r['w']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.w = float(r['w']['value'])
-            if r['x']['type'] == 'typed-literal':
+            if r.has_key('x') and r['x']['type'] == 'typed-literal':
                 if r['x']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
-                    spainfo.pose.position.x = float(r['w']['value'])
-            if r['y']['type'] == 'typed-literal':
+                    spainfo.pose.position.x = float(r['x']['value'])
+            if r.has_key('y') and r['y']['type'] == 'typed-literal':
                 if r['y']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.position.y = float(r['y']['value'])
-            if r['z']['type'] == 'typed-literal':
+            if r.has_key('z') and r['z']['type'] == 'typed-literal':
                 if r['z']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.position.z = float(r['z']['value'])
-            if r['qx']['type'] == 'typed-literal':
+            if r.has_key('qx') and r['qx']['type'] == 'typed-literal':
                 if r['qx']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.orientation.x = float(r['qx']['value'])
-            if r['qy']['type'] == 'typed-literal':
+            if r.has_key('qy') and r['qy']['type'] == 'typed-literal':
                 if r['qy']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.orientation.y = float(r['qy']['value'])
-            if r['qz']['type'] == 'typed-literal':
+            if r.has_key('qz') and r['qz']['type'] == 'typed-literal':
                 if r['qz']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.orientation.z = float(r['qz']['value'])
-            if r['qw']['type'] == 'typed-literal':
+            if r.has_key('qw') and r['qw']['type'] == 'typed-literal':
                 if r['qw']['datatype'] == 'http://www.w3.org/2001/XMLSchema#float':
                     spainfo.pose.orientation.w = float(r['qw']['value'])
 
